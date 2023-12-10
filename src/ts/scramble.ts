@@ -4,6 +4,11 @@ type getMovesArrType = {
     moveCount: number
 }
 
+type chooseMoveType = {
+    move: string,
+    id1: number
+}
+
 function getMovesArr(type: string='3x3'): getMovesArrType{
     let possibleMoves: number, moves: string[], moveCount: number;
 
@@ -37,7 +42,7 @@ function getMovesArr(type: string='3x3'): getMovesArrType{
     return {moves, possibleMoves, moveCount}
 }
 
-function chooseMove(old1: number|string, type: string, moves: string[], possibleMoves: number, moveCount: number): [string|number]{
+function chooseMove(old1: number|string, type: string, moves: string[], possibleMoves: number, moveCount: number): chooseMoveType{
     //* check which type of move
     let id1: number = Math.floor(Math.random() * possibleMoves)
     id1 = id1 === possibleMoves ? id1-- : id1;
@@ -45,8 +50,9 @@ function chooseMove(old1: number|string, type: string, moves: string[], possible
     
     //* check if moves are the same, as last time
     if(old1.toString() === id1.toString()){
-        let [moveNew, id1New, moveCountNew] = chooseMove(old1, type, moves, possibleMoves, moveCount)
-        return [moveNew, id1New, moveCountNew];
+        let moveNew = chooseMove(old1, type, moves, possibleMoves, moveCount).move
+        let id1New = chooseMove(old1, type, moves, possibleMoves, moveCount).id1
+        return {move: moveNew, id1: id1New};
     }
     //* change the second symbol of the move
     const id2: number = Math.round(Math.random() * 2)
@@ -59,7 +65,7 @@ function chooseMove(old1: number|string, type: string, moves: string[], possible
         move += "2"
     }
 
-    return [move, id1]
+    return {move, id1}
 }
 
 function scramble(type: string): string{
@@ -69,13 +75,14 @@ function scramble(type: string): string{
     let moveCount = getMovesArr(type.toString()).moveCount;
 
     //* some values
-    const moveCountRandom: number = Math.trunc(Math.random() * 2) + (moveCount - 1);
+    const moveCountRandom: number = Math.floor(Math.random() * 2) + (moveCount - 1);
     const scramble: string[] = [];
     let old1: number|string = '';
 
     //* invoke chooseMove function a lot of times
     for(let i = 0; i < moveCountRandom; i++){
-        const [move, id1] = chooseMove(old1, type, moves, possibleMoves, moveCount)
+        const move: string = chooseMove(old1, type, moves, possibleMoves, moveCount).move
+        const id1: number = chooseMove(old1, type, moves, possibleMoves, moveCount).id1
         old1 = id1;
         scramble.push(move);
     }

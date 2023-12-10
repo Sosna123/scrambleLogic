@@ -1,6 +1,6 @@
-"use strict";
-function getMovesArr(type = '3x3') {
-    let possibleMoves, moves, moveCount;
+function getMovesArr(type) {
+    if (type === void 0) { type = '3x3'; }
+    var possibleMoves, moves, moveCount;
     if (type === '3x3') {
         //* 3x3
         moves = ['R', 'L', 'B', 'F', 'U', 'D'];
@@ -31,44 +31,46 @@ function getMovesArr(type = '3x3') {
         possibleMoves = moves.length;
         moveCount = 20;
     }
-    return { moves, possibleMoves, moveCount };
+    return { moves: moves, possibleMoves: possibleMoves, moveCount: moveCount };
 }
 function chooseMove(old1, type, moves, possibleMoves, moveCount) {
     //* check which type of move
-    let id1 = Math.floor(Math.random() * possibleMoves);
+    var id1 = Math.floor(Math.random() * possibleMoves);
     id1 = id1 === possibleMoves ? id1-- : id1;
     //* check if moves are the same, as last time
     if (old1.toString() === id1.toString()) {
-        let [moveNew, id1New, moveCountNew] = chooseMove(old1, type, moves, possibleMoves, moveCount);
-        return [moveNew, id1New, moveCountNew];
+        var moveNew = chooseMove(old1, type, moves, possibleMoves, moveCount).move;
+        var id1New = chooseMove(old1, type, moves, possibleMoves, moveCount).id1;
+        return { move: moveNew, id1: id1New };
     }
     //* change the second symbol of the move
-    const id2 = Math.round(Math.random() * 2);
-    let move = moves[id1];
+    var id2 = Math.round(Math.random() * 2);
+    var move = moves[id1];
     if (id2 === 1) {
         move += "'";
     }
     if (id2 === 2) {
         move += "2";
     }
-    return [move, id1];
+    return { move: move, id1: id1 };
 }
 function scramble(type) {
     //* make movecount work
-    let moves = getMovesArr(type.toString()).moves;
-    let possibleMoves = getMovesArr(type.toString()).possibleMoves;
-    let moveCount = getMovesArr(type.toString()).moveCount;
+    var moves = getMovesArr(type.toString()).moves;
+    var possibleMoves = getMovesArr(type.toString()).possibleMoves;
+    var moveCount = getMovesArr(type.toString()).moveCount;
     //* some values
-    const moveCountRandom = Math.trunc(Math.random() * 2) + (moveCount - 1);
-    const scramble = [];
-    let old1 = '';
+    var moveCountRandom = Math.floor(Math.random() * 2) + (moveCount - 1);
+    var scramble = [];
+    var old1 = '';
     //* invoke chooseMove function a lot of times
-    for (let i = 0; i < moveCountRandom; i++) {
-        const [move, id1] = chooseMove(old1, type, moves, possibleMoves, moveCount);
+    for (var i = 0; i < moveCountRandom; i++) {
+        var move = chooseMove(old1, type, moves, possibleMoves, moveCount).move;
+        var id1 = chooseMove(old1, type, moves, possibleMoves, moveCount).id1;
         old1 = id1;
         scramble.push(move);
     }
-    let scrambleText = scramble.join(' ');
+    var scrambleText = scramble.join(' ');
     //* return scramble
     return scrambleText;
 }
